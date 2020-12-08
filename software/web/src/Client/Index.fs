@@ -1,8 +1,19 @@
 module Index
 
 open Elmish
-open Fable.Remoting.Client
-open Shared
+open System
+
+type Todo =
+    { Id : Guid
+      Description : string }
+
+module Todo =
+    let isValid (description: string) =
+        String.IsNullOrWhiteSpace description |> not
+
+    let create (description: string) =
+        { Id = Guid.NewGuid()
+          Description = description }
 
 type Model =
     { Todos: Todo list
@@ -14,10 +25,13 @@ type Msg =
     | AddTodo
     | AddedTodo of Todo
 
+type ITodosApi =
+    { getTodos : unit -> Async<Todo list>
+      addTodo : Todo -> Async<Todo> }
+
 let todosApi =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<ITodosApi>
+    { getTodos = fun () -> async { return [Todo.create("Hello")] }
+      addTodo = fun todo -> async { return todo } }
 
 let init(): Model * Cmd<Msg> =
     let model =
