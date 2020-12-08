@@ -35,8 +35,9 @@ type NoteJsonObject (note: string, volume: int, duration: int) =
     member __.volume = volume
     member __.duration = duration
 
-type LightingConfigurationJsonObject (id: string, patterns: PatternJsonObject list, commands: CommandJsonObject list, music: NoteJsonObject list) =
+type LightingConfigurationJsonObject (id: Guid, name: string, patterns: PatternJsonObject list, commands: CommandJsonObject list, music: NoteJsonObject list) =
     member __.id = id
+    member __.name = name
     member __.patterns = patterns
     member __.commands = commands
     member __.music = music
@@ -48,8 +49,8 @@ type CommandInputObject (command: string, id: string, rotate: bool, amount: int,
     member __.amount = amount
     member __.duration = duration
 
-type LightingConfigurationInputObject (id: string, patterns: PatternJsonObject list, commands: CommandInputObject list, music: NoteJsonObject list) =
-    member __.id = id
+type LightingConfigurationInputObject (name: string, patterns: PatternJsonObject list, commands: CommandInputObject list, music: NoteJsonObject list) =
+    member __.name = name
     member __.patterns = patterns
     member __.commands = commands
     member __.music = music
@@ -94,7 +95,7 @@ type Note (note: NoteNum, volume: int, duration: int) =
     member __.binary: int32 = (int32)(((int note &&& 0xFF) <<< 24) ||| ((volume &&& 0xFF) <<< 16) ||| (duration &&& 0xFFFF))
     member __.jsonObject: NoteJsonObject = NoteJsonObject (string note, volume, duration)
 
-type LightingConfiguration (patterns: Pattern list, commands: Command list, notes: Note list) =
+type LightingConfiguration (name: string, patterns: Pattern list, commands: Command list, notes: Note list) =
     member __.binary: byte list =
         let header = List.append [ byte 'C'; byte 'L' ]
                         ([(int16)(List.length patterns); (int16)(List.length commands); (int16)(List.length notes)] |> List.collect (BitConverter.GetBytes >> List.ofArray) )
@@ -102,14 +103,14 @@ type LightingConfiguration (patterns: Pattern list, commands: Command list, note
         let commandBytes = (commands |> List.map (fun c -> c.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         let musicBytes = (notes |> List.map (fun n -> n.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         List.concat [header; patternBytes; commandBytes; musicBytes]
-    member __.jsonObject (id: string) : LightingConfigurationJsonObject =
+    member __.jsonObject (id: Guid) : LightingConfigurationJsonObject =
         let patternsJsonObject = patterns |> List.map (fun p -> p.jsonObject)
         let commandsJsonObject = commands |> List.map (fun c -> c.jsonObject)
         let musicJsonObject = notes |> List.map (fun n -> n.jsonObject)
-        LightingConfigurationJsonObject(id, patternsJsonObject, commandsJsonObject, musicJsonObject)
+        LightingConfigurationJsonObject(id, name, patternsJsonObject, commandsJsonObject, musicJsonObject)
 
 module Test =
-    let lightingConfig : LightingConfiguration = LightingConfiguration([Pattern("test", [Color(0xFF0000)], 59, 0)], [Display("test", 0); Delay(1500); Clear()], [Note(NoteNum.A4, 128, 1000)])
+    let lightingConfig : LightingConfiguration = LightingConfiguration("test", [Pattern("test", [Color(0xFF0000)], 59, 0)], [Display("test", 0); Delay(1500); Clear()], [Note(NoteNum.A4, 128, 1000)])
 
 module LightingConfiguration =
     let MaxPayloadSize = 1 <<< 14
@@ -122,12 +123,12 @@ module LightingConfiguration =
             | Error s -> Error s
             | Ok () -> findError y
 
-    let idValid (id: string) : Result<unit, string> =
-        if String.IsNullOrWhiteSpace id then
-            Error "id cannot be empty"
+    let internal nameValid (name: string) : Result<unit, string> =
+        if String.IsNullOrWhiteSpace name then
+            Error "Name cannot be empty"
         else
-        if String.length id > 255 then
-            Error "id cannot be longer than 255 characters"
+        if String.length name > 255 then
+            Error "Name cannot be longer than 255 characters"
         else Ok ()
 
     let internal patternValid (pattern: PatternJsonObject) : Result<unit, string> =
@@ -210,11 +211,11 @@ module LightingConfiguration =
         Note(Enum.Parse<NoteNum>(note.note), note.volume, note.duration)
 
     let internal isValid (json: LightingConfigurationInputObject) : Result<unit, string> =
-        let isIdValid = lazy(idValid json.id)
+        let isNameValid = lazy(nameValid json.name)
         let isPatternsValid = lazy(patternsValid json.patterns)
         let isCommandsValid = lazy(commandsValid json.patterns json.commands)
         let isNotesValid = lazy(notesValid json.music)
-        [isIdValid; isPatternsValid; isCommandsValid; isNotesValid] |> findError
+        [isNameValid; isPatternsValid; isCommandsValid; isNotesValid] |> findError
 
     let rec internal getPatternOffsets (patterns: PatternJsonObject list) (sum: int) : Map<string, int> =
         match patterns with
@@ -240,11 +241,12 @@ module LightingConfiguration =
 
             let patternOffsets = getPatternOffsets usedPatterns 0
 
+            let name = json.name
             let patterns = usedPatterns |> List.map convertPattern
             let commands = json.commands |> List.map (convertCommand patternOffsets)
             let music = json.music |> List.map convertNote
 
-            Ok (LightingConfiguration(patterns, commands, music))
+            Ok (LightingConfiguration(name, patterns, commands, music))
 
 type NextConfigRequest =
     { id : string }

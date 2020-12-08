@@ -1,42 +1,43 @@
 namespace Storage
 
 open LightingConfiguration
+open System
 
 type ErrorResponse =
     { statusCode : int
       message : string }
 
-type CurrentConfigResponse =
-    { id : string
-      hashCode: int }
+type CurrentConfig =
+    { id : Guid
+      set : DateTime }
 
 type Storage () =
-    let mutable configs : Map<string, LightingConfiguration> = Map.empty
-    let mutable current : string = null
+    let mutable configs : Map<Guid, LightingConfiguration> = Map.empty
+    let mutable current : CurrentConfig Option = None
 
-    let rec findNext (items: string list) (current: string) : string =
+    let rec findNext (items: Guid list) (current: Guid) : Guid Option =
         match items with
-        | [] -> null
-        | x :: y :: _ when x = current -> y
+        | [] -> None
+        | x :: y :: _ when current = x -> Some y
         | _ :: x -> findNext x current
 
     member __.listConfigs : LightingConfigurationJsonObject list =
         List.ofSeq configs |> List.map (fun kvp -> kvp.Value.jsonObject kvp.Key)
 
-    member __.getConfig (id: string) : Result<LightingConfigurationJsonObject, ErrorResponse> =
+    member __.getConfig (id: Guid) : Result<LightingConfigurationJsonObject, ErrorResponse> =
         match configs.TryFind id with
         | Some config -> Ok (config.jsonObject id)
         | _ -> Error { statusCode = 404
                        message = "Lighting configuration not found" }
 
-    member __.getConfigBinary (id: string) : Result<byte list, ErrorResponse> =
+    member __.getConfigBinary (id: Guid) : Result<byte list, ErrorResponse> =
         match configs.TryFind id with
         | Some config -> Ok config.binary
         | _ -> Error { statusCode = 404
                        message = "Lighting configuration not found" }
 
     member __.addConfig (configJsonObject: LightingConfigurationInputObject) : Result<LightingConfigurationJsonObject, ErrorResponse> =
-        let id = configJsonObject.id
+        let id = Guid.NewGuid()
         match configs.ContainsKey id with
         | false ->
             let newConfig = LightingConfiguration.convert(configJsonObject)
@@ -49,66 +50,70 @@ type Storage () =
         | true -> Error { statusCode = 400
                           message = "Collection already contains lighting configuration with given id" }
 
-    member __.updateConfig (id: string) (configJsonObject: LightingConfigurationInputObject) : Result<unit, ErrorResponse> =
-        match configs.ContainsKey configJsonObject.id with
+    member __.updateConfig (id: Guid) (configJsonObject: LightingConfigurationInputObject) : Result<unit, ErrorResponse> =
+        match configs.ContainsKey id with
         | true ->
             let newConfig = LightingConfiguration.convert(configJsonObject)
             match newConfig with
             | Ok c ->
                 configs <- configs.Add (id, c)
+                match current with
+                | Some c when c.id = id ->
+                    current <- Some { id = id
+                                      set = DateTime.Now }
+                | _ -> ()
+                |> ignore
                 Ok ()
             | Error m -> Error { statusCode = 400
                                  message = m } 
         | false -> Error { statusCode = 404
                            message = "Lighting configuration not found" }
 
-    member __.deleteConfig (id: string) : Result<unit, ErrorResponse> =
+    member __.deleteConfig (id: Guid) : Result<unit, ErrorResponse> =
         match configs.ContainsKey id with
         | true -> 
             configs <- configs.Remove id
+            match current with
+            | Some c when c.id = id -> current <- None
+            | _ -> ()
+            |> ignore
             Ok ()
         | false -> Error { statusCode = 404
                            message = "Lighting configuration not found" }
 
-    member __.getCurrent : CurrentConfigResponse =
-        match current with
-        | null -> { id = null
-                    hashCode = 0 }
-        | _ ->
-            match configs.TryFind current with
-            | Some config -> { id = current
-                               hashCode = config.GetHashCode() }
-            | _ -> { id = null
-                     hashCode = 0 }
+    member __.getCurrent : CurrentConfig Option = current
 
-    member this.setCurrent (id: string) : Result<CurrentConfigResponse, ErrorResponse> =
+    member __.setCurrent (id: Guid Option) : Result<CurrentConfig Option, ErrorResponse> =
         match id with
-        | null ->
+        | None ->
             let ids = List.ofSeq configs |> List.map (fun kvp -> kvp.Key)
             match (ids, current) with
             | ([], _) ->
-                current <- null
-            | (_, null) ->
+                current <- None
+            | (_, None) ->
                 // Set to first item
-                current <- List.head ids
-            | (_, _) ->
+                current <- Some { id = List.head ids
+                                  set = DateTime.Now }
+            | (_, Some c) ->
                 // Set to next item
-                let next = match findNext ids current with
-                           | null -> List.head ids
-                           | x -> x
-                current <- next                
-            Ok this.getCurrent
-        | _ ->
-            match configs.ContainsKey id with
+                let next = match findNext ids c.id with
+                           | Some x -> x
+                           | None -> List.head ids
+                current <- Some { id = next
+                                  set = DateTime.Now }
+            Ok current
+        | Some i ->
+            match configs.ContainsKey i with
             | true ->
-                current <- id
-                Ok this.getCurrent
+                current <- Some { id = i
+                                  set = DateTime.Now }
+                Ok current
             | false ->
                 Error { statusCode = 400
                         message = "Lighting configuration not found" }
 
     member __.stop : unit =
-        current <- null
+        current <- None
 
-    member __.insertConfig (id: string) (config: LightingConfiguration) =
-        configs <- configs.Add(id, config)
+    member __.insertConfig  (config: LightingConfiguration) =
+        configs <- configs.Add (Guid.NewGuid(), config)

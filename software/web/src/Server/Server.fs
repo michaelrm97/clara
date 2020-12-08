@@ -6,22 +6,31 @@ open Saturn
 open LightingConfiguration
 open Storage
 
+open System
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
-open Microsoft.FSharp.Collections
 open FSharp.Control.Tasks
 
 let storage = Storage()
 
-storage.insertConfig "test" Test.lightingConfig |> ignore
+storage.insertConfig Test.lightingConfig |> ignore
 
 let listConfigs (ctx: HttpContext) : Task<HttpContext Option> = Controller.json ctx storage.listConfigs
 
 let getConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> =
     let accept = ctx.TryGetRequestHeader "Accept"
+
+    let mutable guid : Guid = Guid.NewGuid()
+    if Guid.TryParse (id, &guid) |> not then
+        ctx.SetStatusCode 400
+        Controller.json ctx
+            { statusCode = 400
+              message = "id is invalid" }
+    else
+
     match accept with
     | Some "application/octet-stream" ->
-        match storage.getConfigBinary id with
+        match storage.getConfigBinary guid with
         | Ok result ->
             Controller.sendDownloadBinary ctx (List.toArray result)
         | Error e ->
@@ -29,7 +38,7 @@ let getConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> =
             ctx.SetStatusCode e.statusCode
             Controller.sendDownloadBinary ctx response
     | _ ->
-        match storage.getConfig id with
+        match storage.getConfig guid with
         | Ok result ->
             Controller.json ctx result
         | Error e ->
@@ -60,6 +69,14 @@ let addConfig (ctx: HttpContext) : Task<HttpContext Option> = task {
 let updateConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> = task {
     let! configJsonObject = Controller.getJson<LightingConfigurationInputObject> ctx
 
+    let mutable guid : Guid = Guid.NewGuid()
+    if Guid.TryParse (id, &guid) |> not then
+        ctx.SetStatusCode 400
+        return! Controller.json ctx
+            { statusCode = 400
+              message = "id is invalid" }
+    else
+
     if configJsonObject :> obj = null then
         ctx.SetStatusCode 400
         return! Controller.json ctx
@@ -67,7 +84,7 @@ let updateConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> = ta
               message = "Lighting configuration is empty" }
     else
 
-    match storage.updateConfig id configJsonObject with
+    match storage.updateConfig guid configJsonObject with
     | Ok () ->
         ctx.SetStatusCode 204
         return! Task.FromResult (Some ctx)
@@ -77,7 +94,15 @@ let updateConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> = ta
 }
 
 let deleteConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> =
-    match storage.deleteConfig id with
+    let mutable guid : Guid = Guid.NewGuid()
+    if Guid.TryParse (id, &guid) |> not then
+        ctx.SetStatusCode 400
+        Controller.json ctx
+            { statusCode = 400
+              message = "id is invalid" }
+    else
+
+    match storage.deleteConfig guid with
     | Ok () ->
         ctx.SetStatusCode 204
         Task.FromResult (Some ctx)
@@ -85,10 +110,28 @@ let deleteConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> =
         ctx.SetStatusCode e.statusCode
         Controller.json ctx e
 
-let returnCurrentConfig (next: HttpFunc) (ctx: HttpContext) (result: CurrentConfigResponse) =
+type CurrentConfigResponse =
+    { id : string
+      set : string }
+
+let returnCurrentConfig (next: HttpFunc) (ctx: HttpContext) (result: CurrentConfig Option) =
     match ctx.TryGetRequestHeader "Accept" with
-    | Some "text/plain" -> Successful.OK (sprintf "%s,%i" (if result.id = null then "" else result.id) result.hashCode) next ctx
-    | _ -> Successful.OK result next ctx
+    | Some "text/plain" ->
+        let response =
+            match result with
+                | Some r -> sprintf "%s,%i" (r.id.ToString()) r.set.Ticks
+                | None -> "None"
+        Successful.OK response next ctx
+    | _ ->
+        let response =
+            match result with
+                | Some r ->
+                    { id = r.id.ToString()
+                      set = r.set.ToString() }
+                | None ->
+                    { id = null
+                      set = null }
+        Successful.OK response next ctx
 
 let getCurrent : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
@@ -103,7 +146,13 @@ let setNext : HttpHandler =
 
             let id = if nextConfig :> obj = null then null else nextConfig.id
 
-            match storage.setCurrent id with
+            let nextConfig =
+                let mutable guid : Guid = Guid.NewGuid()
+                if Guid.TryParse (id, &guid) then
+                    Some guid
+                else None
+
+            match storage.setCurrent nextConfig with
             | Ok result -> return! returnCurrentConfig next ctx result
             | Error e ->
                 match ctx.TryGetRequestHeader "Accept" with
