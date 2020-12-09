@@ -47,16 +47,17 @@ Target.create "Bundle" (fun _ ->
 
 Target.create "Azure" (fun _ ->
     let web = webApp {
-        name "project-clara-web"
+        name "project-clara"
         zip_deploy "deploy"
+        sku (WebApp.Basic "B1")
     }
     let deployment = arm {
-        location Location.WestEurope
+        location Location.WestUS2
         add_resource web
     }
 
     deployment
-    |> Deploy.execute "project-clara-web" Deploy.NoParameters
+    |> Deploy.execute "project-clara" Deploy.NoParameters
     |> ignore
 )
 
