@@ -1,15 +1,16 @@
 module Server
 
-open Giraffe
-open Saturn
-
-open LightingConfiguration
-open Storage
-
 open System
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
 open FSharp.Control.Tasks
+
+open Giraffe
+open Saturn
+
+open LightingConfiguration
+open Shared
+open Storage
 
 let storage = Storage()
 
@@ -85,9 +86,8 @@ let updateConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> = ta
     else
 
     match storage.updateConfig guid configJsonObject with
-    | Ok () ->
-        ctx.SetStatusCode 204
-        return! Task.FromResult (Some ctx)
+    | Ok result ->
+        return! Controller.json ctx result
     | Error e ->
         ctx.SetStatusCode e.statusCode
         return! Controller.json ctx e
@@ -109,10 +109,6 @@ let deleteConfig (ctx: HttpContext) (id: string) : Task<HttpContext Option> =
     | Error e ->
         ctx.SetStatusCode e.statusCode
         Controller.json ctx e
-
-type CurrentConfigResponse =
-    { id : string
-      set : string }
 
 let returnCurrentConfig (next: HttpFunc) (ctx: HttpContext) (result: CurrentConfig Option) =
     match ctx.TryGetRequestHeader "Accept" with

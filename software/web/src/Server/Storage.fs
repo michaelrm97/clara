@@ -1,15 +1,9 @@
 namespace Storage
 
-open LightingConfiguration
 open System
 
-type ErrorResponse =
-    { statusCode : int
-      message : string }
-
-type CurrentConfig =
-    { id : Guid
-      set : DateTime }
+open LightingConfiguration
+open Shared
 
 type Storage () =
     let mutable configs : Map<Guid, LightingConfiguration> = Map.empty
@@ -50,7 +44,7 @@ type Storage () =
         | true -> Error { statusCode = 400
                           message = "Collection already contains lighting configuration with given id" }
 
-    member __.updateConfig (id: Guid) (configJsonObject: LightingConfigurationInputObject) : Result<unit, ErrorResponse> =
+    member __.updateConfig (id: Guid) (configJsonObject: LightingConfigurationInputObject) : Result<LightingConfigurationJsonObject, ErrorResponse> =
         match configs.ContainsKey id with
         | true ->
             let newConfig = LightingConfiguration.convert(configJsonObject)
@@ -63,7 +57,7 @@ type Storage () =
                                       set = DateTime.Now }
                 | _ -> ()
                 |> ignore
-                Ok ()
+                Ok (c.jsonObject id)
             | Error m -> Error { statusCode = 400
                                  message = m } 
         | false -> Error { statusCode = 404

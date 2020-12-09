@@ -247,6 +247,3 @@ module LightingConfiguration =
             let music = json.music |> List.map convertNote
 
             Ok (LightingConfiguration(name, patterns, commands, music))
-
-type NextConfigRequest =
-    { id : string }

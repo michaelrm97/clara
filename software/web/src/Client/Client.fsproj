@@ -5,13 +5,20 @@
         <DefineConstants>FABLE_COMPILER</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="public\app.js" />
+        <Content Include="public\favicon.png" />
         <None Include="index.html" />
         <None Include="paket.references" />
         <Compile Include="Index.fs" />
         <Compile Include="App.fs" />
     </ItemGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\Shared\Shared.fsproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Fable.Promise" Version="2.0.0" />
+        <PackageReference Include="Fable.Fetch" Version="2.2.0" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
