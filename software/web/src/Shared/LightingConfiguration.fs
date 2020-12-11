@@ -59,6 +59,7 @@ type LightingConfigurationInputObject (name: string, patterns: PatternJsonObject
 type Command () =
     abstract binary : int16
     abstract jsonObject : CommandJsonObject
+    member __.length : int16 = (int16)2
 
 type Color (value: int) =
     member __.Binary : int32 = value
@@ -70,6 +71,7 @@ type Pattern (id: string, leds: Color list, repeat: int, offset: int) =
         header :: (leds |> List.map (fun l -> l.Binary))
     member __.jsonObject : PatternJsonObject =
         PatternJsonObject(id, leds |> List.map (fun c -> c.JsonString), repeat, offset)
+    member __.length : int16 = (int16)(4 * (1 + List.length leds))
 
 type Display (id: string, patternOffset: int) =
     inherit Command()
@@ -94,11 +96,16 @@ type Delay (duration: int) =
 type Note (note: NoteNum, volume: int, duration: int) =
     member __.binary: int32 = (int32)(((int note &&& 0xFF) <<< 24) ||| ((volume &&& 0xFF) <<< 16) ||| (duration &&& 0xFFFF))
     member __.jsonObject: NoteJsonObject = NoteJsonObject (string note, volume, duration)
+    member __.length : int16 = (int16)4
 
 type LightingConfiguration (name: string, patterns: Pattern list, commands: Command list, notes: Note list) =
     member __.binary: byte list =
-        let header = List.append [ byte 'C'; byte 'L' ]
-                        ([(int16)(List.length patterns); (int16)(List.length commands); (int16)(List.length notes)] |> List.collect (BitConverter.GetBytes >> List.ofArray) )
+        let header = List.append [ byte 'C'; byte 'L' ] ([
+                        patterns |> List.sumBy (fun p -> p.length)
+                        commands |> List.sumBy (fun c -> c.length)
+                        notes |> List.sumBy (fun n -> n.length)
+                     ]
+                     |> List.collect (BitConverter.GetBytes >> List.ofArray))
         let patternBytes = (patterns |> List.collect (fun p -> p.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         let commandBytes = (commands |> List.map (fun c -> c.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         let musicBytes = (notes |> List.map (fun n -> n.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)

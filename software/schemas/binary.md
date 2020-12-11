@@ -46,10 +46,10 @@ Header contains the length of the led color array, as well as the number of time
 
 | Section | Size (bits) | Description |
 | :- | :- | :- |
+| Reserved | 8 | Reserved for future use |
 | Red | 8 | Red color brightness |
 | Green | 8 | Green color brightness |
 | Blue | 8 | Blue color brightness |
-| Reserved | 8 | Reserved for future use |
 
 ## Command
 
