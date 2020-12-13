@@ -28,11 +28,13 @@ type Msg =
     | DeletedConfig of Guid
     | SetInput of string
     | SelectConfig of Guid
+    | StoppedConfig
     | NewConfig
     | AddConfig
     | UpdateConfig
     | DeleteConfig
     | PlayConfig
+    | StopConfig
     | NextConfig
     | Refresh
 
@@ -110,6 +112,10 @@ module LightingApi =
                 else None |> Promise.lift)
             |> Promise.catch (fun _ -> None)
 
+    let stopConfig = fun () ->
+        ConfigJson.lib.postConfig "api/stop" ""
+            |> Promise.map (fun _ -> ())
+
     let nextConfig = fun () ->
         ConfigJson.lib.postConfig "api/next" ""
             |> Promise.bind (fun res ->
@@ -183,6 +189,8 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
             | None -> ""
         let newCurrent = if model.Current = Some id then None else model.Current
         { model with Configs = newConfigs; Selected = newSelected; Input = newInput; Current = newCurrent; Error = "" }, Cmd.none
+    | StoppedConfig ->
+        { model with Current = None; Error = "" }, Cmd.none
     | SetInput input ->
         { model with Input = input }, Cmd.none
     | SelectConfig selected ->
@@ -203,6 +211,8 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
         match model.Selected with
         | None -> model, Cmd.none
         | Some x -> model, Cmd.OfPromise.perform LightingApi.playConfig x CurrentConfig
+    | StopConfig ->
+        model, Cmd.OfPromise.perform LightingApi.stopConfig () (fun _ -> StoppedConfig)
     | NextConfig ->
         model, Cmd.OfPromise.perform LightingApi.nextConfig () CurrentConfig
     | Refresh ->
@@ -324,10 +334,17 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
                 ]
                 Level.item [ ] [
                     Button.button [
-                        Button.Color IsWarning
+                        Button.Color IsPrimary
                         Button.OnClick (fun _ -> NextConfig |> dispatch)
                         Button.Disabled (List.length model.Configs = 0)
                     ] [ str "Next" ]
+                ]
+                Level.item [ ] [
+                    Button.button [
+                        Button.Color IsWarning
+                        Button.OnClick (fun _ -> StopConfig |> dispatch)
+                        Button.Disabled (model.Selected = None)
+                    ] [ str "Stop" ]
                 ]
                 Level.item [ ] [
                     Button.button [

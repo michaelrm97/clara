@@ -12,7 +12,7 @@ The web server is an ASP.NET core application written in F# using the SAFE stack
 
 To run the web server locally run:
 
-`dotnet fake build --target run`
+`dotnet fake build --target Run`
 
 To deploy the web server to Azure run:
 
