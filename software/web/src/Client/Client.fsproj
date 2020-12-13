@@ -5,6 +5,7 @@
         <DefineConstants>FABLE_COMPILER</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
+        <Content Include="public\schemas\lighting.json" />
         <None Include="public\app.js" />
         <Content Include="public\favicon.png" />
         <None Include="index.html" />
