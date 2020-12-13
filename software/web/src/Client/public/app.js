@@ -16,4 +16,34 @@ function parseConfigList(data) {
     return configs.map(toConfig);
 }
 
-export { parseConfig, parseConfigList };
+function getConfig(uri) {
+    return fetch(uri);
+}
+
+function postConfig(uri, body) {
+    return fetch(uri, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: body
+    });
+}
+
+function putConfig(uri, body) {
+    return fetch(uri, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: body
+    });
+}
+
+function deleteConfig(uri) {
+    return fetch(uri, {
+        method: "DELETE"
+    });
+}
+
+export { parseConfig, parseConfigList, getConfig, postConfig, putConfig, deleteConfig };

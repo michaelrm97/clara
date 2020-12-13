@@ -1,9 +1,9 @@
 namespace LightingConfiguration
 
 open System
+open System.Text.RegularExpressions
 open Microsoft.FSharp.Collections
 open Notes
-open System.Text.RegularExpressions
 
 type PatternJsonObject (id: string, leds: string list, repeat: int, offset: int) =
     member __.id = id
@@ -115,9 +115,6 @@ type LightingConfiguration (name: string, patterns: Pattern list, commands: Comm
         let commandsJsonObject = commands |> List.map (fun c -> c.jsonObject)
         let musicJsonObject = notes |> List.map (fun n -> n.jsonObject)
         LightingConfigurationJsonObject(id, name, patternsJsonObject, commandsJsonObject, musicJsonObject)
-
-module Test =
-    let lightingConfig : LightingConfiguration = LightingConfiguration("test", [Pattern("test", [Color(0xFF0000)], 59, 0)], [Display("test", 0); Delay(1500); Clear()], [Note(NoteNum.A4, 128, 1000)])
 
 module LightingConfiguration =
     let MaxPayloadSize = 1 <<< 14

@@ -12,9 +12,12 @@ open LightingConfiguration
 open Shared
 open Storage
 
+open Configs
+
 let storage = Storage()
 
-storage.insertConfig Test.lightingConfig |> ignore
+storage.insertConfig SilentNight.config |> ignore
+storage.insertConfig Greensleeves.config |> ignore
 
 let listConfigs (ctx: HttpContext) : Task<HttpContext Option> = Controller.json ctx storage.listConfigs
 

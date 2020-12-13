@@ -1,0 +1,185 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "https://project-clara.com/schemas/lighting.json",
+    "title": "Lighting",
+    "description": "Lighting Configuration for CLARA",
+    "type": "object",
+
+    "properties": {
+        "id": {
+            "description": "Configuration Id",
+            "type": "string"        },
+        "name": {
+            "description": "Configuration name",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+        },
+        "patterns": {
+            "description": "Lighting patterns",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/pattern"
+            }
+        },
+        "commands": {
+            "description": "Lighting commands",
+            "type": "array",
+            "items": {
+                "oneOf": [
+                    { "$ref": "#/definitions/display" },
+                    { "$ref": "#/definitions/shift" },
+                    { "$ref": "#/definitions/clear" },
+                    { "$ref": "#/definitions/wait" }
+                ]
+            }
+        },
+        "music": {
+            "description": "Music notes",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/note"
+            }
+        }
+    },
+
+    "definitions": {
+        "pattern": {
+            "description": "Define a pattern to display",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Identifier for this pattern- must be unique",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                },
+                "leds": {
+                    "description": "Array of led color values",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 59,
+                    "items": {
+                        "type": "string",
+                        "pattern": "^#[A-Fa-f0-9]{6}$"
+                    }
+                },
+                "repeat": {
+                    "description": "Number of times patern repeats. 0 for infinite repetition, 1 for no repetition",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 59,
+                    "multipleOf": 1.0
+                },
+                "offset": {
+                    "description": "Offset to start the pattern from",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 58,
+                    "multipleOf": 1.0
+                }
+            },
+            "required": ["id", "leds"],
+            "additionalProperties": false
+        },
+        "display": {
+            "description": "Display a particular pattern",
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "pattern": "^display$"
+                },
+                "id": {
+                    "description": "Id of pattern to display",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                }
+            },
+            "required": ["type", "id"],
+            "additionalProperties": false
+        },
+        "shift": {
+            "description": "Shift the pattern by a given amount",
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "pattern": "^shift$"
+                },
+                "rotate": {
+                    "description": "Whether shift is a rotation",
+                    "type": "boolean"
+                },
+                "amount": {
+                    "description": "Amount to shift by",
+                    "type": "number",
+                    "minimum": -58,
+                    "maximum": 58,
+                    "multipleOf": 1.0
+                }
+            },
+            "required": ["type", "amount"],
+            "additionalProperties": false
+        },
+        "clear": {
+            "description": "Clear display",
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "pattern": "^clear$"
+                }                
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "wait": {
+            "description": "Wait a given amount of time",
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "pattern": "^wait$"
+                },
+                "duration": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 32767,
+                    "multipleOf": 1.0
+                }
+                
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "note": {
+            "description": "Single music note",
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string",
+                    "pattern": "^(Rest|(C|CS|Db|D|DS|Eb|E|F|FS|Gb|G|GS|Ab|A|AS|Bb|B)[3-6])$"
+                },
+                "volume": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 128,
+                    "multipleOf": 1.0
+                },
+                "duration": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "multipleOf": 1.0
+                }
+            },
+            "required": ["note", "volume", "duration"],
+            "additionalProperties": false
+        }
+    },
+
+    "required": ["id"],
+    "additionalProperties": false
+}
