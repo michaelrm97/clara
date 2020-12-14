@@ -139,7 +139,7 @@ ApiStatus nextConfig() {
   if (currentTime >= nextCurrentConfigTime) {
     nextCurrentConfigTime = currentTime + FETCH_CURRENT_CONFIG_PERIOD;
     client.beginRequest();
-    client.get("/api/current");
+    client.post("/api/next");
     client.sendHeader("Accept", "text/plain");
     client.endRequest();
 
@@ -152,7 +152,6 @@ ApiStatus nextConfig() {
       return NoChange;
     }
 
-  
     int len = client.contentLength();
     if (client.read((uint8_t *)newResponse, len) != len) {
       return NoChange;
