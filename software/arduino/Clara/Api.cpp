@@ -30,7 +30,7 @@ char *currentConfigId;
 char *currentConfigTimestamp;
 
 char response[2][MAX_CURRENT_RESPONSE_LEN + 1];
-char path[MAX_PATH_LEN + 1] = "/api/lighting/";
+char path[MAX_PATH_LEN + 1];
 
 char *currentResponse;
 char *newResponse;
@@ -45,8 +45,8 @@ ApiStage apiStage;
 int responseIndex;
 
 static ApiStatus checkApiStatus() {
-  // Check if None
-  if (strcmp(newResponse, "None")) {
+  // Check if None  
+  if (!strcmp(newResponse, "None")) {
     return (currentConfigId == NULL) ? NoChange : Stopped;
   }
 
@@ -75,15 +75,16 @@ static ApiStatus checkApiStatus() {
     // Swap buffers
     char *tmp = currentResponse;
     currentResponse = newResponse;
-    newResponse = currentResponse;
+    newResponse = tmp;
     return NewConfig;
   }
-
   return NoChange;
 }
 
 void setupApi() {
   while (WiFi.begin(ssid, pass) != WL_CONNECTED);
+
+  // Serial.println("Connected");
 
   nextCurrentConfigTime = millis();
 
@@ -120,7 +121,6 @@ ApiStatus getConfig() {
       return NoChange;
     }
 
-  
     int len = client.contentLength();
     if (client.read((uint8_t *)newResponse, len) != len) {
       return NoChange;
@@ -214,6 +214,7 @@ bool loadConfig() {
     return false;
   }
 
+  strncpy(path, "/api/lighting/", MAX_PATH_LEN);
   strncat(path, currentConfigId, MAX_PATH_LEN);
   
   client.beginRequest();
@@ -223,17 +224,28 @@ bool loadConfig() {
 
   int statusCode = client.responseStatusCode();
   if (statusCode != 200) {
+    currentConfigId = NULL;
+    currentConfigTimestamp = NULL;
     return false;
   }
 
   if (client.skipResponseHeaders() != HTTP_SUCCESS) {
+    currentConfigId = NULL;
+    currentConfigTimestamp = NULL;
     return false;
   }
 
   int len = client.contentLength();
   if (client.read(getData(), len) != len) {
+    currentConfigId = NULL;
+    currentConfigTimestamp = NULL;
     return false;
   }
 
-  return checkIn(len);
+  if (checkIn(len)) {
+    return true;
+  } else {
+    currentConfigId = NULL;
+    currentConfigTimestamp = NULL;
+  }
 }

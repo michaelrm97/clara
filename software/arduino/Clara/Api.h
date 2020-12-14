@@ -20,6 +20,7 @@ ApiStatus checkCurrent();
 
 // Load the currently set config
 // Returns true if successful
+// On failure- resets current config
 bool loadConfig();
 
 #endif /* API_H_ */

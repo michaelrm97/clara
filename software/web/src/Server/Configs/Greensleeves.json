@@ -1,0 +1,33 @@
+{
+  "name": "Greensleeves",
+  "patterns": [
+    {
+      "id": "test",
+      "leds": [
+        "#FF0000"
+      ],
+      "repeat": 59,
+      "offset": 0
+    }
+  ],
+  "commands": [
+    {
+      "id": "test",
+      "command": "display"
+    },
+    {
+      "duration": 1500,
+      "command": "wait"
+    },
+    {
+      "command": "clear"
+    }
+  ],
+  "music": [
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 1000
+    }
+  ]
+}

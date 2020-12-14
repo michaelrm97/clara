@@ -38,12 +38,11 @@ void applyCommand(Command command) {
 void showLights(uint16_t brightness) {
   float factor = brightness / 1024.0;
   for (int i = 0; i < NUM_LEDS; i++) {
-    uint8_t r = ((ledBuffer[i] >> 16) & 0xFF);
-    uint8_t g = ((ledBuffer[i] >> 8) & 0xFF);
-    uint8_t b = ((ledBuffer[i] >> 0) & 0xFF);
-
-    leds[i] = CRGB(r * factor, g * factor, b * factor);
-  } 
+    uint8_t r = ((ledBuffer[i] >> 16) & 0xFF) * factor;
+    uint8_t g = ((ledBuffer[i] >> 8) & 0xFF) * factor;
+    uint8_t b = ((ledBuffer[i] >> 0) & 0xFF) * factor;
+    leds[i] = CRGB(r, g, b);
+  }
   FastLED.show();
 }
 
@@ -65,7 +64,7 @@ static void fillPattern(Command command) {
       ledBuffer[offset] = *(uint32_t*)PATTERN_LED(p,i);
       ++i;
       if (i == len) {
-        len = 0;
+        i = 0;
       }
       ++offset;
     }
@@ -75,14 +74,12 @@ static void fillPattern(Command command) {
       ledBuffer[offset] = *(uint32_t*)PATTERN_LED(p,i);
       ++i;
       if (i == len) {
-        len = 0;
+        i = 0;
         --repeats;
       }
       ++offset;
     }
-  }
-
-  
+  }  
 }
 
 static void shiftBuffer(Command command) {

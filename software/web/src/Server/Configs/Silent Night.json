@@ -1,0 +1,58 @@
+{
+  "name": "Silent Night",
+  "patterns": [
+    {
+      "id": "stripes",
+      "leds": [
+        "#FF0000",
+        "#00FF00"
+      ],
+      "repeat": 0,
+      "offset": 0
+    }
+  ],
+  "commands": [
+    {
+      "id": "stripes",
+      "command": "display"
+    },
+    {
+      "duration": 1000,
+      "command": "wait"
+    },
+    {
+      "rotate": true,
+      "amount": 1,
+      "command": "shift"
+    },
+    {
+      "duration": 1000,
+      "command": "wait"
+    },
+    {
+      "command": "clear"
+    }
+  ],
+  "music": [
+    {
+      "note": "F4",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "F4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "D4",
+      "volume": 128,
+      "duration": 1500
+    }
+  ]
+}

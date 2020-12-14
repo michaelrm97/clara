@@ -387,6 +387,24 @@ let schemaButton =
         ]
     ] [ str "View Schema" ]
 
+let gitHubButton =
+    Button.a [
+        Button.Color IsLink
+        Button.Props [
+            Href "https://github.com/michaelrm97/clara"
+        ]
+    ] [
+        img [
+            Src "/GitHub-Mark-64px.png"
+            Alt "GitHub"
+            Style [
+                Height "100%"
+                MarginRight "10px"
+            ]
+        ]
+        str "About"
+    ]
+
 let view (model : Model) (dispatch : Msg -> unit) =
     Hero.hero [
         Hero.IsFullHeight
@@ -401,10 +419,17 @@ let view (model : Model) (dispatch : Msg -> unit) =
                     containerBox model dispatch
                     Level.level [ ] [
                         Level.left [ ] [
-                            schemaButton
+                            Level.item [ ] [
+                                schemaButton
+                            ]
+                            Level.item [ ] [
+                                gitHubButton
+                            ]
                         ]
                         Level.right [ ] [
-                            refreshButton dispatch
+                            Level.item [ ] [
+                                refreshButton dispatch
+                            ]
                         ]
                     ]
                 ]

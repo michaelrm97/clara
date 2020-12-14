@@ -16,9 +16,9 @@ Payload header consists of a header field (for sanity check), along with the siz
 | Section | Size (bytes) | Description |
 | :- | :- | :- |
 | Header field | 2 | The ASCII characters CL |
-| Patterns section size | 2 | The size of the patterns section in bytes |
-| Commands section size | 2 | The size of the commands section in bytes |
-| Notes section size | 2 | The size of the notes section |
+| Patterns section size | 2 | The size of the patterns section in 4 byte words |
+| Commands section size | 2 | The size of the commands section in 2 byte words |
+| Notes section size | 2 | The size of the notes section in 4 byte words |
 
 ## Pattern
 

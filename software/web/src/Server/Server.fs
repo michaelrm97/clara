@@ -12,12 +12,18 @@ open LightingConfiguration
 open Shared
 open Storage
 
-open Configs
+open System.IO
+open Newtonsoft.Json
+
+let insertConfigFromJson (storage: Storage) (filename: string) : unit =
+    let contents = File.ReadAllText filename
+    let configJsonObject = JsonConvert.DeserializeObject<LightingConfigurationInputObject> contents
+    storage.addConfig configJsonObject |> ignore
 
 let storage = Storage()
 
-storage.insertConfig SilentNight.config |> ignore
-storage.insertConfig Greensleeves.config |> ignore
+insertConfigFromJson storage "Configs/Greensleeves.json"
+insertConfigFromJson storage "Configs/Silent Night.json"
 
 let listConfigs (ctx: HttpContext) : Task<HttpContext Option> = Controller.json ctx storage.listConfigs
 

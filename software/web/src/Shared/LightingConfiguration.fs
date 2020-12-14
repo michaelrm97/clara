@@ -11,23 +11,26 @@ type PatternJsonObject (id: string, leds: string list, repeat: int, offset: int)
     member __.repeat = repeat
     member __.offset = offset
 
-type CommandJsonObject (command: string) =
-    member __.command = command
+type CommandJsonObject () = class end
 
 type DisplayJsonObject (id: string) =
-    inherit CommandJsonObject("display")
+    inherit CommandJsonObject()
+    member __.command = "display"
     member __.id = id
 
 type ShiftJsonObject (rotate: bool, amount: int) =
-    inherit CommandJsonObject("shift")
+    inherit CommandJsonObject()
+    member __.command = "shift"
     member __.rotate = rotate
     member __.amount = amount
     
 type ClearJsonObject () =
-    inherit CommandJsonObject("clear")
+    inherit CommandJsonObject()
+    member __.command = "clear"
 
 type DelayJsonObject (duration: int) =
-    inherit CommandJsonObject("wait")
+    inherit CommandJsonObject()
+    member __.command = "wait"
     member __.duration = duration
 
 type NoteJsonObject (note: string, volume: int, duration: int) =
@@ -59,11 +62,11 @@ type LightingConfigurationInputObject (name: string, patterns: PatternJsonObject
 type Command () =
     abstract binary : int16
     abstract jsonObject : CommandJsonObject
-    member __.length : int16 = (int16)2
+    member __.length : int16 = (int16)1
 
 type Color (value: int) =
     member __.Binary : int32 = value
-    member __.JsonString : string = "#" + value.ToString("X")
+    member __.JsonString : string = "#" + value.ToString("X6")
 
 type Pattern (id: string, leds: Color list, repeat: int, offset: int) =
     member __.binary : int32 list =
@@ -71,7 +74,7 @@ type Pattern (id: string, leds: Color list, repeat: int, offset: int) =
         header :: (leds |> List.map (fun l -> l.Binary))
     member __.jsonObject : PatternJsonObject =
         PatternJsonObject(id, leds |> List.map (fun c -> c.JsonString), repeat, offset)
-    member __.length : int16 = (int16)(4 * (1 + List.length leds))
+    member __.length : int16 = (int16)(1 + List.length leds)
 
 type Display (id: string, patternOffset: int) =
     inherit Command()
@@ -96,7 +99,7 @@ type Delay (duration: int) =
 type Note (note: NoteNum, volume: int, duration: int) =
     member __.binary: int32 = (int32)(((int note &&& 0xFF) <<< 24) ||| ((volume &&& 0xFF) <<< 16) ||| (duration &&& 0xFFFF))
     member __.jsonObject: NoteJsonObject = NoteJsonObject (string note, volume, duration)
-    member __.length : int16 = (int16)4
+    member __.length : int16 = (int16)1
 
 type LightingConfiguration (name: string, patterns: Pattern list, commands: Command list, notes: Note list) =
     member __.binary: byte list =
@@ -109,7 +112,8 @@ type LightingConfiguration (name: string, patterns: Pattern list, commands: Comm
         let patternBytes = (patterns |> List.collect (fun p -> p.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         let commandBytes = (commands |> List.map (fun c -> c.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
         let musicBytes = (notes |> List.map (fun n -> n.binary)) |> List.collect (BitConverter.GetBytes >> List.ofArray)
-        List.concat [header; patternBytes; commandBytes; musicBytes]
+        let paddingBytes = if (List.length commands) % 2 = 1 then [(byte)0; (byte)0] else [];
+        List.concat [header; patternBytes; commandBytes; paddingBytes; musicBytes]
     member __.jsonObject (id: Guid) : LightingConfigurationJsonObject =
         let patternsJsonObject = patterns |> List.map (fun p -> p.jsonObject)
         let commandsJsonObject = commands |> List.map (fun c -> c.jsonObject)

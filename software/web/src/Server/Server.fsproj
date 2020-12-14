@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Configs\*.fs" />
+    <None Include="Configs\*.json" />
     <Compile Include="Storage.fs" />
     <None Include="paket.references" />
     <Compile Include="Server.fs" />
