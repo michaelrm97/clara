@@ -58,7 +58,7 @@
                     "description": "Array of led color values",
                     "type": "array",
                     "minItems": 1,
-                    "maxItems": 59,
+                    "maxItems": 60,
                     "items": {
                         "type": "string",
                         "pattern": "^#[A-Fa-f0-9]{6}$"
@@ -68,14 +68,14 @@
                     "description": "Number of times patern repeats. 0 for infinite repetition, 1 for no repetition",
                     "type": "number",
                     "minimum": 0,
-                    "maximum": 59,
+                    "maximum": 60,
                     "multipleOf": 1.0
                 },
                 "offset": {
                     "description": "Offset to start the pattern from",
                     "type": "number",
                     "minimum": 0,
-                    "maximum": 58,
+                    "maximum": 59,
                     "multipleOf": 1.0
                 }
             },
@@ -115,8 +115,8 @@
                 "amount": {
                     "description": "Amount to shift by",
                     "type": "number",
-                    "minimum": -58,
-                    "maximum": 58,
+                    "minimum": -59,
+                    "maximum": 59,
                     "multipleOf": 1.0
                 }
             },

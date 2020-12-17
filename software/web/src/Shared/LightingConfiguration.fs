@@ -143,17 +143,17 @@ module LightingConfiguration =
         if String.IsNullOrWhiteSpace pattern.id then
             Error "Pattern id cannot be empty"
         else
-        if List.length pattern.leds < 1 || List.length pattern.leds > 59 then
-            Error "Number of leds in pattern must be between 1 and 59"
+        if List.length pattern.leds < 1 || List.length pattern.leds > 60 then
+            Error "Number of leds in pattern must be between 1 and 60"
         else
         if List.forall (fun led -> Regex.IsMatch(led, "^#[A-Fa-f0-9]{6}$")) pattern.leds |> not then
             Error "Each led in a pattern must be a valid HTML color string"
         else
-        if pattern.repeat < 0 || pattern.repeat > 59 then
-            Error "Repeat must be between 0 and 59 inclusive"
+        if pattern.repeat < 0 || pattern.repeat > 60 then
+            Error "Repeat must be between 0 and 60 inclusive"
         else
-        if pattern.offset < 0 || pattern.offset > 58 then
-            Error "Offset must be between 0 and 58 inclusive"
+        if pattern.offset < 0 || pattern.offset > 59 then
+            Error "Offset must be between 0 and 59 inclusive"
         else Ok ()
 
     let internal patternsValid (patterns: PatternJsonObject list) : Result<unit, string> =
@@ -174,8 +174,8 @@ module LightingConfiguration =
                 Error "Pattern id in display command must match a specified pattern"
             else Ok ()
         | "shift" ->
-            if command.amount < -58 || command.amount > 58 then
-                Error "Shift amount must be between -58 and 58 inclusive"
+            if command.amount < -59 || command.amount > 59 then
+                Error "Shift amount must be between -59 and 59 inclusive"
             else Ok ()
         | "clear" -> Ok ()
         | "wait" ->

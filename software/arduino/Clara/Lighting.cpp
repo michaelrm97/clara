@@ -5,9 +5,10 @@
 #include <FastLED.h>
 
 #define NUM_LEDS 59
-#define DATA_PIN 10
+#define BUFFER_SIZE 60
+#define DATA_PIN 7
 
-uint32_t ledBuffer[NUM_LEDS];
+uint32_t ledBuffer[BUFFER_SIZE];
 CRGB leds[NUM_LEDS];
 
 static void fillPattern(Command command);
@@ -60,7 +61,7 @@ static void fillPattern(Command command) {
 
   if (repeats == 0) {
     int i = 0;
-    while (offset < NUM_LEDS) {
+    while (offset < BUFFER_SIZE) {
       ledBuffer[offset] = *(uint32_t*)PATTERN_LED(p,i);
       ++i;
       if (i == len) {
@@ -70,7 +71,7 @@ static void fillPattern(Command command) {
     }
   } else {
     int i = 0;
-    while (repeats > 0 && offset < NUM_LEDS) {
+    while (repeats > 0 && offset < BUFFER_SIZE) {
       ledBuffer[offset] = *(uint32_t*)PATTERN_LED(p,i);
       ++i;
       if (i == len) {
@@ -86,28 +87,28 @@ static void shiftBuffer(Command command) {
   bool rotate = COMMAND_SHIFT_ROTATE(command);
   int8_t shift = COMMAND_SHIFT_SHIFT(command);
   if (rotate) {
-    uint32_t tmp[NUM_LEDS];
+    uint32_t tmp[BUFFER_SIZE];
     if (shift > 0) {
-      memmove(tmp, &ledBuffer[NUM_LEDS - shift], shift * 4);
-      memmove(&ledBuffer[shift], ledBuffer, (NUM_LEDS - shift) * 4);
+      memmove(tmp, &ledBuffer[BUFFER_SIZE - shift], shift * 4);
+      memmove(&ledBuffer[shift], ledBuffer, (BUFFER_SIZE - shift) * 4);
       memmove(ledBuffer, tmp, shift * 4);
     } else {
       memmove(tmp, ledBuffer, shift * 4);
-      memmove(ledBuffer, &ledBuffer[shift], (NUM_LEDS - shift) * 4);
-      memmove(&ledBuffer[NUM_LEDS - shift], tmp, shift * 4);
+      memmove(ledBuffer, &ledBuffer[shift], (BUFFER_SIZE - shift) * 4);
+      memmove(&ledBuffer[BUFFER_SIZE - shift], tmp, shift * 4);
     }
   } else {
     if (shift > 0) {
-      memmove(&ledBuffer[shift], ledBuffer, (NUM_LEDS - shift) * 4);
+      memmove(&ledBuffer[shift], ledBuffer, (BUFFER_SIZE - shift) * 4);
       memset(ledBuffer, 0, shift * 4);
       
     } else {
-      memmove(ledBuffer, &ledBuffer[shift], (NUM_LEDS - shift) * 4);
-      memset(&ledBuffer[NUM_LEDS - shift], 0, shift * 4);
+      memmove(ledBuffer, &ledBuffer[shift], (BUFFER_SIZE - shift) * 4);
+      memset(&ledBuffer[BUFFER_SIZE - shift], 0, shift * 4);
     }
   }
 }
 
 static void clearBuffer() {
-  memset(ledBuffer, 0, 4 * NUM_LEDS);
+  memset(ledBuffer, 0, 4 * BUFFER_SIZE);
 }

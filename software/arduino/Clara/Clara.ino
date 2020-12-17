@@ -3,17 +3,23 @@
 #include "LightingConfiguration.h"
 #include "Notes.h"
 
+#include "MyTone.h"
+
 #define REFRESH_PERIOD 100 // Display every 100ms
 
 #define POT_PIN A6
 
 void setup() {
-  // Serial.begin(9600);
-
+#ifdef SERIAL
+  Serial.begin(9600);
+#endif
   pinMode(POT_PIN, INPUT);
   
   setupApi();
   setupLights();
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 bool isRunning = false;
@@ -40,6 +46,7 @@ void loop() {
         return;
       case Stopped:
         // Stop everything
+        isRunning = false;
         stopConfig();
         return;
     }
@@ -81,12 +88,10 @@ void loop() {
     }
 
     if (commandsDone && musicDone) {
-      // Serial.println("Commands done");
       resetLights();
       switch(nextConfig()) {
        case NoChange:
-        // Serial.println("No change");
-         // No need to load - just reset state
+        // No need to load - just reset state
         resetState();
         setupConfig();
         break;
@@ -94,12 +99,10 @@ void loop() {
         // Stop everything
         isRunning = loadConfig();
         if (isRunning) {
-          // Serial.println("Setting up new config");  
           setupConfig();
         }
         break;
       case Stopped:
-        // Serial.println("Stopped");
         isRunning = false;
         return;
       }
@@ -108,7 +111,6 @@ void loop() {
     if (getConfig() == NewConfig) {
       isRunning = loadConfig();
       if (isRunning) {
-        // Serial.println("Setting up config");  
         setupConfig();
       }
     }  

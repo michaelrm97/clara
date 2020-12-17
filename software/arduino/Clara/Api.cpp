@@ -82,10 +82,13 @@ static ApiStatus checkApiStatus() {
 }
 
 void setupApi() {
+#ifdef SERIAL
+  Serial.println("Attempting to connect");
+#endif
   while (WiFi.begin(ssid, pass) != WL_CONNECTED);
-
-  // Serial.println("Connected");
-
+#ifdef SERIAL
+  Serial.println("Connected");
+#endif
   nextCurrentConfigTime = millis();
 
   currentConfigId = NULL;
@@ -136,32 +139,29 @@ ApiStatus getConfig() {
 // Move onto next config (/api/next)
 ApiStatus nextConfig() {
   auto currentTime = millis();
-  if (currentTime >= nextCurrentConfigTime) {
-    nextCurrentConfigTime = currentTime + FETCH_CURRENT_CONFIG_PERIOD;
-    client.beginRequest();
-    client.post("/api/next");
-    client.sendHeader("Accept", "text/plain");
-    client.endRequest();
-
-    int statusCode = client.responseStatusCode();
-    if (statusCode != 200) {
-      return NoChange;
-    }
   
-    if (client.skipResponseHeaders() != HTTP_SUCCESS) {
-      return NoChange;
-    }
+  client.beginRequest();
+  client.post("/api/next");
+  client.sendHeader("Accept", "text/plain");
+  client.sendHeader("Content-Length", "0");
+  client.endRequest();
 
-    int len = client.contentLength();
-    if (client.read((uint8_t *)newResponse, len) != len) {
-      return NoChange;
-    }
-    newResponse[len] = '\0';
-
-    return checkApiStatus();
-  } else {
+  int statusCode = client.responseStatusCode();
+  if (statusCode != 200) {
     return NoChange;
   }
+
+  if (client.skipResponseHeaders() != HTTP_SUCCESS) {
+    return NoChange;
+  }
+
+  int len = client.contentLength();
+  if (client.read((uint8_t *)newResponse, len) != len) {
+    return NoChange;
+  }
+  newResponse[len] = '\0';
+
+  return checkApiStatus();
 }
 
 // Check if there is a new config (non-blocking)

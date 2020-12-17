@@ -1,7 +1,6 @@
 #ifndef API_H_
 #define API_H_
 
-
 typedef enum apiStatus {
   NoChange,
   NewConfig,
