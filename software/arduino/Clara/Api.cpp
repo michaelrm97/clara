@@ -178,29 +178,27 @@ ApiStatus checkCurrent() {
     } else {
       return NoChange;
     }
-  }
-
-  if (apiStage == ReadingHeaders) {
-    while (!client.endOfHeadersReached()) {
-      if (!client.readHeader()) {
-        return NoChange;
-      }
+  } else if (apiStage == ReadingHeaders) {
+    if (!client.endOfHeadersReached()) {
+      client.readHeader();
+      return NoChange;
+    } else {
+      apiStage = ReadingBody;
+      responseIndex = 0;
     }
-    apiStage = ReadingBody;
-    responseIndex = 0;
-  }
-
-  if (apiStage == ReadingBody) {
-    while (!client.endOfBodyReached()) {
+  } else if (apiStage == ReadingBody) {
+    if (!client.endOfBodyReached()) {
       int c = client.read();
       if (c < 0) {
         return NoChange;
       }
       newResponse[responseIndex++] = c;
+      return NoChange;
+    } else {
+      newResponse[responseIndex] = '\0';
+      apiStage = RequestNotSent;
+      return checkApiStatus();
     }
-    newResponse[responseIndex] = '\0';
-    apiStage = RequestNotSent;
-    return checkApiStatus();
   }
 
   return NoChange;

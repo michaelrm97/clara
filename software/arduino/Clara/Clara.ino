@@ -103,6 +103,7 @@ void loop() {
         }
         break;
       case Stopped:
+        resetState();
         isRunning = false;
         return;
       }
