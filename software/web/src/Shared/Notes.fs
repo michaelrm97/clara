@@ -1,6 +1,7 @@
 namespace Notes
 
 type NoteNum =
+    | Rest = 0
     | C3 = 48
     | CS3 = 49
     | Db3 = 49

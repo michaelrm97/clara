@@ -97,7 +97,10 @@ type Delay (duration: int) =
     override __.jsonObject = DelayJsonObject duration :> _
 
 type Note (note: NoteNum, volume: int, duration: int) =
-    member __.binary: int32 = (int32)(((int note &&& 0xFF) <<< 24) ||| ((volume &&& 0xFF) <<< 16) ||| (duration &&& 0xFFFF))
+    member __.binary: int32 =
+        if note <> NoteNum.Rest then
+            (int32)(((int note &&& 0xFF) <<< 24) ||| ((volume &&& 0xFF) <<< 16) ||| (duration &&& 0xFFFF))
+        else (duration &&& 0xFFFF)
     member __.jsonObject: NoteJsonObject = NoteJsonObject (string note, volume, duration)
     member __.length : int16 = (int16)1
 
