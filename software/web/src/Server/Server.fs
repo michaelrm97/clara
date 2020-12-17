@@ -157,7 +157,12 @@ let setNext : HttpHandler =
                     Some guid
                 else None
 
-            match storage.setCurrent nextConfig with
+            let start =
+                match ctx.TryGetQueryStringValue "start" with
+                | None   -> false
+                | Some _ -> true
+
+            match storage.setCurrent nextConfig start with
             | Ok result -> return! returnCurrentConfig next ctx result
             | Error e ->
                 match ctx.TryGetRequestHeader "Accept" with

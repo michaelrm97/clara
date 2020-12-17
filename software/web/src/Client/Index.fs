@@ -117,7 +117,7 @@ module LightingApi =
             |> Promise.map (fun _ -> ())
 
     let nextConfig = fun () ->
-        ConfigJson.lib.postConfig "api/next" ""
+        ConfigJson.lib.postConfig "api/next?start" ""
             |> Promise.bind (fun res ->
                 if res.Status = 200 then
                     res.json<CurrentConfigResponse> ()
