@@ -22,8 +22,8 @@ let insertConfigFromJson (storage: Storage) (filename: string) : unit =
 
 let storage = Storage()
 
-insertConfigFromJson storage "Configs/Greensleeves.json"
 insertConfigFromJson storage "Configs/Silent Night.json"
+//insertConfigFromJson storage "Configs/Greensleeves.json"
 
 let listConfigs (ctx: HttpContext) : Task<HttpContext Option> = Controller.json ctx storage.listConfigs
 

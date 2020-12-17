@@ -13,46 +13,485 @@
   ],
   "commands": [
     {
-      "id": "stripes",
-      "command": "display"
+      "command": "display",
+      "id": "stripes"
     },
     {
-      "duration": 1000,
-      "command": "wait"
+      "command": "wait",
+      "duration": 1500
     },
     {
+      "command": "shift",
       "rotate": true,
-      "amount": 1,
-      "command": "shift"
+      "amount": 1
     },
     {
-      "duration": 1000,
-      "command": "wait"
+      "command": "wait",
+      "duration": 1500
     },
     {
-      "command": "clear"
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
     }
   ],
   "music": [
     {
-      "note": "F4",
+      "note": "G4",
       "volume": 128,
       "duration": 750
     },
     {
-      "note": "G4",
+      "note": "A4",
       "volume": 128,
       "duration": 250
     },
     {
-      "note": "F4",
+      "note": "G4",
       "volume": 128,
       "duration": 500
     },
     {
-      "note": "D4",
+      "note": "E4",
       "volume": 128,
       "duration": 1500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "E4",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "D5",
+      "volume": 128,
+      "duration": 950
+    },
+    {
+      "note": "Rest",
+      "volume": 0,
+      "duration": 50
+    },
+    {
+      "note": "D5",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "B4",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 950
+    },
+    {
+      "note": "Rest",
+      "volume": 0,
+      "duration": 50
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 950
+    },
+    {
+      "note": "Rest",
+      "volume": 0,
+      "duration": 50
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "B4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "E4",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 950
+    },
+    {
+      "note": "Rest",
+      "volume": 0,
+      "duration": 50
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "B4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "A4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "E4",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "D5",
+      "volume": 128,
+      "duration": 950
+    },
+    {
+      "note": "Rest",
+      "volume": 0,
+      "duration": 50
+    },
+    {
+      "note": "D5",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "F5",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "D5",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "B4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "E5",
+      "volume": 128,
+      "duration": 1500
+    },
+    {
+      "note": "C5",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "E4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "G4",
+      "volume": 128,
+      "duration": 750
+    },
+    {
+      "note": "F4",
+      "volume": 128,
+      "duration": 250
+    },
+    {
+      "note": "D4",
+      "volume": 128,
+      "duration": 500
+    },
+    {
+      "note": "C4",
+      "volume": 128,
+      "duration": 3000
     }
   ]
 }
