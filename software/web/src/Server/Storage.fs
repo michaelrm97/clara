@@ -80,24 +80,24 @@ type Storage () =
     member __.setCurrent (id: Guid Option) (start: bool) : Result<CurrentConfig Option, ErrorResponse> =
         match id with
         | None ->
-            if start then
-                let ids = List.ofSeq configs |> List.map (fun kvp -> kvp.Key)
-                match (ids, current) with
-                | ([], _) ->
-                    current <- None
-                | (_, None) ->
+            let ids = List.ofSeq configs |> List.map (fun kvp -> kvp.Key)
+            match (ids, current) with
+            | ([], _) ->
+                current <- None
+            | (_, None) ->
+                if start then
                     // Set to first item
                     current <- Some { id = List.head ids
                                       set = DateTime.Now }
-                | (_, Some c) ->
-                    // Set to next item
-                    let next = match findNext ids c.id with
-                               | Some x -> x
-                               | None -> List.head ids
-                    current <- Some { id = next
-                                      set = DateTime.Now }
-                Ok current
-            else Ok None
+                else ()
+            | (_, Some c) ->
+                // Set to next item
+                let next = match findNext ids c.id with
+                            | Some x -> x
+                            | None -> List.head ids
+                current <- Some { id = next
+                                  set = DateTime.Now }
+            Ok current
         | Some i ->
             match configs.ContainsKey i with
             | true ->
