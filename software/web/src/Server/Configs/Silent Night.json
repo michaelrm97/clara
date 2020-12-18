@@ -63,7 +63,169 @@
     },
     {
       "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
       "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 1500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
+    },
+    {
+      "command": "shift",
+      "rotate": true,
+      "amount": 1
+    },
+    {
+      "command": "wait",
+      "duration": 500
     },
     {
       "command": "shift",
@@ -108,7 +270,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
@@ -117,7 +279,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
@@ -126,7 +288,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
@@ -135,7 +297,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
@@ -144,7 +306,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
@@ -153,70 +315,7 @@
     },
     {
       "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
-    },
-    {
-      "command": "shift",
-      "rotate": true,
-      "amount": 1
-    },
-    {
-      "command": "wait",
-      "duration": 1500
+      "duration": 500
     },
     {
       "command": "shift",
