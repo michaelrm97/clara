@@ -82,11 +82,11 @@ static ApiStatus checkApiStatus() {
 }
 
 void setupApi() {
-#ifdef SERIAL
+#ifdef DEBUG
   Serial.println("Attempting to connect");
 #endif
   while (WiFi.begin(ssid, pass) != WL_CONNECTED);
-#ifdef SERIAL
+#ifdef DEBUG
   Serial.println("Connected");
 #endif
   nextCurrentConfigTime = millis();
@@ -232,14 +232,16 @@ bool loadConfig() {
     return false;
   }
 
-  int len = client.contentLength();
-  if (client.read(getData(), len) != len) {
-    currentConfigId = NULL;
-    currentConfigTimestamp = NULL;
-    return false;
+  int contentLen = client.contentLength();
+  int offset = 0;
+  int len = contentLen;
+  while (len > 0) {
+    int nRead = client.read(getData() + offset, len);
+    len -= nRead;
+    offset += nRead;
   }
 
-  if (checkIn(len)) {
+  if (checkIn(contentLen)) {
     return true;
   } else {
     currentConfigId = NULL;

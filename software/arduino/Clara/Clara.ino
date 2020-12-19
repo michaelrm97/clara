@@ -10,7 +10,7 @@
 #define POT_PIN A6
 
 void setup() {
-#ifdef SERIAL
+#ifdef DEBUG
   Serial.begin(9600);
 #endif
   pinMode(POT_PIN, INPUT);
