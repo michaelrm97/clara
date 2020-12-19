@@ -86,25 +86,20 @@ static void fillPattern(Command command) {
 static void shiftBuffer(Command command) {
   bool rotate = COMMAND_SHIFT_ROTATE(command);
   int8_t shift = COMMAND_SHIFT_SHIFT(command);
+  while (shift < 0) {
+    shift += BUFFER_SIZE;
+  }
   if (rotate) {
     uint32_t tmp[BUFFER_SIZE];
     if (shift > 0) {
       memmove(tmp, &ledBuffer[BUFFER_SIZE - shift], shift * 4);
       memmove(&ledBuffer[shift], ledBuffer, (BUFFER_SIZE - shift) * 4);
       memmove(ledBuffer, tmp, shift * 4);
-    } else {
-      memmove(tmp, ledBuffer, shift * 4);
-      memmove(ledBuffer, &ledBuffer[shift], (BUFFER_SIZE - shift) * 4);
-      memmove(&ledBuffer[BUFFER_SIZE - shift], tmp, shift * 4);
     }
   } else {
     if (shift > 0) {
       memmove(&ledBuffer[shift], ledBuffer, (BUFFER_SIZE - shift) * 4);
       memset(ledBuffer, 0, shift * 4);
-      
-    } else {
-      memmove(ledBuffer, &ledBuffer[shift], (BUFFER_SIZE - shift) * 4);
-      memset(&ledBuffer[BUFFER_SIZE - shift], 0, shift * 4);
     }
   }
 }

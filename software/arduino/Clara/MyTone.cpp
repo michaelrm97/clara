@@ -15,7 +15,7 @@ volatile int64_t myToggleCount;
 volatile bool myToneIsActive = false;
 volatile bool myFirstTimeRunning = false;
 
-#define N_SEGMENTS 2
+#define N_SEGMENTS 6
 
 #define TONE_TC         TC5
 #define TONE_TC_IRQn    TC5_IRQn
