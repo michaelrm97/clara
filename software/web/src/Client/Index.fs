@@ -7,6 +7,7 @@ open Fetch
 open Shared
 open Fable.Core
 open Fable.SimpleJson
+open Fable.Core.JsInterop
 
 type LightingConfigurationUI =
     { id : Guid
@@ -17,6 +18,7 @@ type Model =
     { Configs: LightingConfigurationUI list
       Current: Guid Option
       Selected: Guid Option
+      MidiFile: Browser.Types.Blob
       Input: string
       Error: string }
 
@@ -37,6 +39,9 @@ type Msg =
     | StopConfig
     | NextConfig
     | Refresh
+    | LoadMidiFile
+    | SaveMidiFile of Browser.Types.Blob
+    | ErrorReadingFile
 
 module ConfigJson =
     type IConfigJson =
@@ -67,7 +72,6 @@ module LightingApi =
 
         fetchConfigs
             |> Promise.bind (fun configs -> Promise.map (fun current -> configs, current) fetchCurrent)
-
     let addConfig = fun (input: string) ->
         ConfigJson.lib.postConfig "api/lighting" input
             |> Promise.bind (fun res ->
@@ -135,10 +139,13 @@ let init(): Model * Cmd<Msg> =
         { Configs = []
           Current = None
           Selected = None
+          MidiFile = downcast new System.Object()
           Input = ""
           Error = "" }
     let cmd = Cmd.OfPromise.perform LightingApi.getConfigsAndCurrent () GotConfigs
     model, cmd
+
+let convertMidiToClara : Browser.Types.Blob * string -> string = import "convertMidiToClara" "./midi-converter.js" 
 
 let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
     match msg with
@@ -158,7 +165,7 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
                 | Some x -> (List.find (findById x) configs).formatted
                 | None -> ""
             else model.Input
-        { Configs = configs; Current = current; Selected = newSelected; Input = newInput; Error = "" }, Cmd.none
+        { model with Configs = configs; Current = current; Selected = newSelected; Input = newInput; Error = "" }, Cmd.none
     | AddedConfig added ->
         let newModel =
             match added with
@@ -217,6 +224,11 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
         model, Cmd.OfPromise.perform LightingApi.nextConfig () CurrentConfig
     | Refresh ->
         model, Cmd.OfPromise.perform LightingApi.getConfigsAndCurrent () GotConfigs
+    | LoadMidiFile ->
+        let newInput = convertMidiToClara (model.MidiFile, model.Input)
+        { model with Input = newInput }, Cmd.none
+    | SaveMidiFile midiFile ->
+        { model with MidiFile = midiFile }, Cmd.none
 
 open Fable.React
 open Fable.React.Props
@@ -356,10 +368,41 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
             ]
         ]
 
-        Textarea.textarea [
-            Textarea.Value model.Input
-            Textarea.OnChange (fun x -> SetInput x.Value |> dispatch)
-        ] []
+        Level.level [ ][
+            Textarea.textarea [
+                Textarea.Value model.Input
+                Textarea.OnChange (fun x -> SetInput x.Value |> dispatch)
+            ] []
+        ]
+        
+        label [ ] [
+            str "Upload a MIDI file to generate music for the current config."
+        ]
+        input [ 
+            Class "input"
+            Type "file"
+            OnInput (fun ev -> 
+                let file = ev.target?files?(0)
+                let reader = Browser.Dom.FileReader.Create()
+
+                try 
+                    reader?readAsArrayBuffer(file)
+                with
+                    | Failure msg -> System.Console.WriteLine("No file selected. " + msg)
+
+                reader.onload <- fun evt ->
+                    dispatch (SaveMidiFile evt.target?result)
+
+                    try
+                        dispatch LoadMidiFile
+                    with 
+                        | Failure msg -> System.Console.WriteLine("Error parsing file as MIDI. " + msg)
+
+                reader.onerror <- fun evt ->
+                    System.Console.WriteLine("Error parsing file.")
+            ) 
+        ]
+
 
         Text.p [
             Modifiers [
