@@ -46,7 +46,8 @@ function convertMidiToJson(midiFile) {
     try {
         jsonSong = midi.parseMidi(midiFileBuffer);
     } catch (e) {
-        console.error(ERROR_NEW_CONFIG_MUSIC)
+        console.error(ERROR_NEW_CONFIG_MUSIC);
+        alert(ERROR_NEW_CONFIG_MUSIC);
     }
     
     return jsonSong;
