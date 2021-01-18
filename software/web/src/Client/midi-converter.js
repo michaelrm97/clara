@@ -36,11 +36,11 @@ const DEFAULT_NEW_CONFIG_COMMANDS = [
 ];
 const ERROR_NEW_CONFIG_MUSIC = "Error parsing file - are you sure the file you provided is MIDI?";
 
-var getClaraNoteNameFromMidiNumber = (midiNumber) => {
+function getClaraNoteNameFromMidiNumber(midiNumber) {
     return "" + NOTE_NAMES[((midiNumber - 21) % 12)] + (Math.floor((midiNumber - 24) / 12))
 }
 
-var convertMidiToJson = (midiFile) => {
+function convertMidiToJson(midiFile) {
     const midiFileBuffer = Buffer.from(midiFile);
     let jsonSong;
     try {
