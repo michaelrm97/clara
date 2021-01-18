@@ -368,7 +368,7 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
             ]
         ]
 
-        Level.level [ ][
+        Level.level [ ] [
             Textarea.textarea [
                 Textarea.Value model.Input
                 Textarea.OnChange (fun x -> SetInput x.Value |> dispatch)

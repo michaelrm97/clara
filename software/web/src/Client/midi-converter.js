@@ -36,7 +36,6 @@ const DEFAULT_NEW_CONFIG_COMMANDS = [
         "id": "green"
     }
 ];
-const CREATING_NEW_CONFIG = "No current song input. Creating new song template.";
 const ERROR_NEW_CONFIG_MUSIC = "Error parsing file - are you sure the file you provided is MIDI?";
 
 var getClaraNoteNameFromMidiNumber = (midiNumber) => {
@@ -44,9 +43,8 @@ var getClaraNoteNameFromMidiNumber = (midiNumber) => {
 }
 
 var convertMidiToJson = (midiFile) => {
-    console.log(midiFile);
-    var midiFileBuffer = Buffer.from(midiFile);
-    var jsonSong;
+    const midiFileBuffer = Buffer.from(midiFile);
+    let jsonSong;
     try {
         jsonSong = midi.parseMidi(midiFileBuffer);
     } catch (e) {
@@ -76,32 +74,30 @@ var convertMidiToJson = (midiFile) => {
 export function convertMidiToClara(input) {
     // TODO: Figure how to make this work with Fable and accept two parameters 
     // instead of a tuple
-    var config;
+    let config;
     try {
         config = JSON.parse(input[1]);
     } catch (e) {
-        console.log(CREATING_NEW_CONFIG)
         config = {
-            "id": uuid.v4(),
             "name": DEFAULT_NEW_CONFIG_NAME,
             "patterns": DEFAULT_NEW_CONFIG_PATTERNS,
             "commands": DEFAULT_NEW_CONFIG_COMMANDS,
         }
     }
 
-    var jsonSong =  convertMidiToJson(input[0]);
+    let jsonSong =  convertMidiToJson(input[0]);
     if (!jsonSong) {
         config.music = ERROR_NEW_CONFIG_MUSIC;
         return JSON.stringify(config, null, 2);
     }
     
-    var currentNotesOn = {}
-    var song = [];
-    var currentTime = 0;
-    var lastNoteOffTime;
+    let currentNotesOn = {}
+    let song = [];
+    let currentTime = 0;
+    let lastNoteOffTime;
 
     for (let i in jsonSong.tracks[0]) {
-        var note = jsonSong.tracks[0][i];
+        let note = jsonSong.tracks[0][i];
         currentTime += note.deltaTime ? note.deltaTime : 0;
         if (note.type == NOTE_ON)
         {
@@ -119,7 +115,7 @@ export function convertMidiToClara(input) {
                 "noteTime": currentTime
             };
         } else if  (note.type == NOTE_OFF) {
-            var onEventNote = currentNotesOn[note.noteNumber];
+            let onEventNote = currentNotesOn[note.noteNumber];
             song.push({
                 "note": getClaraNoteNameFromMidiNumber(note.noteNumber),
                 "volume": onEventNote.velocity,
