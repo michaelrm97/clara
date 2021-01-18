@@ -1,6 +1,4 @@
 const midi = require('midi-file');
-const uuid = require('uuid');
-
 const NOTE_NAMES = [
     "A",
     "AS",
