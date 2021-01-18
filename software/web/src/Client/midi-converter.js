@@ -84,14 +84,14 @@ export function convertMidiToClara(input) {
         }
     }
 
-    let jsonSong =  convertMidiToJson(input[0]);
+    const jsonSong =  convertMidiToJson(input[0]);
     if (!jsonSong) {
         config.music = ERROR_NEW_CONFIG_MUSIC;
         return JSON.stringify(config, null, 2);
     }
     
-    let currentNotesOn = {}
-    let song = [];
+    const currentNotesOn = {}
+    const song = [];
     let currentTime = 0;
     let lastNoteOffTime;
 
@@ -114,7 +114,7 @@ export function convertMidiToClara(input) {
                 "noteTime": currentTime
             };
         } else if  (note.type == NOTE_OFF) {
-            let onEventNote = currentNotesOn[note.noteNumber];
+            const onEventNote = currentNotesOn[note.noteNumber];
             song.push({
                 "note": getClaraNoteNameFromMidiNumber(note.noteNumber),
                 "volume": onEventNote.velocity,
