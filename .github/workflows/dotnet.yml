@@ -33,5 +33,5 @@ jobs:
     - name: Deploy
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'clara'
+        app-name: 'project-clara'
         package: './deploy'
