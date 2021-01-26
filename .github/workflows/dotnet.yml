@@ -25,6 +25,9 @@ jobs:
         dotnet tool restore
         dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet publish -c Release --no-restore -o ./deploy
     - name: Deploy
-      run: dotnet fake build --target Azure
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'clara'
+        package: './deploy'
