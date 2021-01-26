@@ -21,16 +21,10 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Restore
-      run: | 
-        dotnet tool restore
-        dotnet restore
-    - name: Build
-      run: dotnet publish -c Release
+      run: dotnet tool restore
     - name: Login via Az module
       uses: azure/login@v1
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
-    - name: Deploy
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'project-clara'
+    - name: Build add deploy
+      run: dotnet fake build --target Azure
