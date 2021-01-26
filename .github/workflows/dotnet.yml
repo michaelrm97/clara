@@ -26,6 +26,10 @@ jobs:
         dotnet restore
     - name: Build
       run: dotnet publish -c Release --no-restore -o ./deploy
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
     - name: Deploy
       uses: azure/webapps-deploy@v2
       with:
