@@ -25,7 +25,7 @@ jobs:
         dotnet tool restore
         dotnet restore
     - name: Build
-      run: dotnet publish -c Release --no-restore -o ./deploy
+      run: dotnet publish -c Release
     - name: Login via Az module
       uses: azure/login@v1
       with:
@@ -34,4 +34,3 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'project-clara'
-        package: './deploy'
